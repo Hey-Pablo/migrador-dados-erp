@@ -1,5 +1,7 @@
 # Migrador de Dados para ERP
 
+> **Demonstração:** https://hey-pablo.github.io/migrador-dados-erp/
+
 > **Status: em desenvolvimento.** O código entra aos poucos; abaixo está o planejamento do projeto.
 
 ## O que é
@@ -76,7 +78,7 @@ Os módulos em `src/core/validadores` retornam booleanos. CPF e CNPJ verificam f
 
 O CNPJ alfanumérico usa módulo 11 e valor ASCII menos 48 para cada caractere, conforme o [manual da Receita Federal](https://www.gov.br/receitafederal/pt-br/centrais-de-conteudo/publicacoes/documentos-tecnicos/cnpj/manual-dv-cnpj.pdf) e a [IN RFB 2.229/2024](https://www.gov.br/receitafederal/pt-br/assuntos/noticias/2024/outubro/cnpj-tera-letras-e-numeros-a-partir-de-julho-de-2026). Validar dígitos não prova que um documento foi emitido.
 
-A publicação no GitHub Pages ocorre por GitHub Actions após push na `main`. A demonstração ainda não está disponível; a URL retornou 404 na verificação desta etapa.
+A publicação no GitHub Pages ocorre por GitHub Actions após push na `main`. A demonstração está publicada e acessível no link abaixo do título.
 
 ## Autor
 
