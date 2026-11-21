@@ -68,7 +68,17 @@ npm ci
 npm run dev
 ```
 
-Execute `npm test` para os testes, `npm run lint` para análise estática e `npm run build` para gerar `dist/`. O site atual é uma tela inicial; a importação e a interface de migração ainda serão implementadas.
+Execute `npm test` para os testes, `npm run lint` para análise estática e `npm run build` para gerar `dist/`. O site atual é uma tela inicial; a interface de migração ainda será implementada. O núcleo pode ser utilizado pelos módulos TypeScript descritos abaixo.
+
+## Núcleo de migração
+
+`lerArquivo(buffer, nome)` lê CSV ou a primeira aba XLSX e retorna colunas e linhas. CSV detecta separador com PapaParse e aceita UTF-8, UTF-16 com BOM ou Windows-1252 como alternativa. Cabeçalhos vazios ou repetidos e linhas com células excedentes são rejeitados. XLSX usa a distribuição oficial do SheetJS. As datas na planilha devem estar em formato textual `DD/MM/AAAA` ou `AAAA-MM-DD`.
+
+`sugerirMapeamento(colunas, layout)` sugere nomes e aliases; o consumidor pode editar o objeto de campo de destino para coluna de origem antes de chamar `processar`. Os layouts de clientes e produtos estão em `src/layouts`. O motor normaliza valores, acumula erros por linha e rejeita documentos válidos repetidos, incluindo repetições em linhas com outros erros. A primeira ocorrência reserva o documento. Produtos não possuem campo de documento. Os exemplos em `exemplos/` usam dados fictícios.
+
+`csvLimpo`, `csvRejeitados` e `sqlInsert` geram os arquivos de saída. O CSV protege células contra fórmulas de planilha; o SQL usa literais escapados e lotes de 500 por padrão. Revise o SQL e adapte tipos e nomes ao banco de destino antes de executá-lo. A linha indicada no relatório corresponde à posição após o cabeçalho, sem contar linhas vazias ignoradas no CSV.
+
+O worker recebe `{ buffer, nome, tipo, mapa }`, onde `tipo` é `clientes` ou `produtos`, e responde com `{ sucesso, validas, rejeitadas }` ou `{ sucesso: false, erro }`. O processamento é local; a interface ainda não usa o worker. Para reproduzir a medição do motor: `npm test -- tests/desempenho.test.ts --disableConsoleIntercept`. Em Node 24.22.3 neste ambiente, 10.000 produtos levaram 249,5 ms no motor, sem leitura, transferência ou worker. A meta de cinco segundos para o fluxo completo no navegador ainda precisa ser medida.
 
 ## Regras disponíveis
 
