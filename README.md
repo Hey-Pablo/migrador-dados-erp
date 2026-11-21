@@ -2,7 +2,7 @@
 
 > **Demonstração:** https://hey-pablo.github.io/migrador-dados-erp/
 
-> **Status: em desenvolvimento.** O código entra aos poucos; abaixo está o planejamento do projeto.
+> **Status: pronto para revisão.** Interface em 4 passos implementada com upload sugerido, mapeamento manual, validação e exportação.
 
 ## O que é
 
@@ -14,7 +14,14 @@ Tratamento e qualidade de dados, TypeScript com testes e o problema que você re
 
 ## Stack
 
-React, TypeScript, Vite, PapaParse (CSV), SheetJS (XLSX), Zod, Web Worker e Vitest. Todo o processamento acontece no navegador.
+React, TypeScript, Vite, PapaParse (CSV), SheetJS (XLSX), Web Worker e Vitest. Todo o processamento acontece no navegador.
+
+## Interface em 4 Passos
+
+1. **Upload** - Selecione o tipo (clientes ou produtos) e arraste ou clique para fazer upload do CSV/XLSX
+2. **Mapear** - Relacione as colunas da sua planilha com os campos do sistema (com sugestão automática)
+3. **Validar** - Veja o resumo: linhas válidas, com aviso e rejeitadas; acesse os motivos de rejeição
+4. **Exportar** - Baixe o CSV limpo, SQL em lote ou CSV de rejeitadas
 
 ## Estrutura
 
@@ -26,69 +33,85 @@ migrador-dados-erp/
 │  │  ├─ mapeamento.ts        # sugere a coluna de destino pelo nome
 │  │  ├─ validadores/         # cpf.ts, cnpj.ts, cep.ts, uf.ts, ncm.ts, email.ts
 │  │  ├─ normalizadores.ts    # máscara, maiúsculas, datas
-│  │  └─ exportadores/        # csv.ts, sql.ts, rejeitados.ts
+│  │  ├─ exportadores/        # csv.ts, sql.ts, rejeitados.ts
+│  │  └─ motor.ts             # processamento principal
 │  ├─ layouts/                # clientes.ts, produtos.ts
-│  ├─ ui/                     # Upload, Mapear, Validar, Exportar
-│  └─ worker.ts
+│  ├─ ui/                     # upload, mapear, validar, exportar
+│  │  ├─ estado/              # contexto de estado
+│  │  ├─ upload/              # tela de seleção tipo e upload
+│  │  ├─ mapear/              # tabela de mapeamento
+│  │  ├─ validar/             # resumo e validação
+│  │  └─ exportar/            # exportação de arquivos
+│  └─ components/              # Progresso
 ├─ exemplos/                  # planilhas fictícias com sujeira
 ├─ tests/
 └─ README.md
 ```
 
-## Plano
+## Caso de Antes e Depois
 
-1. Defina os leiautes de destino: campo, tipo, obrigatório e tamanho.
-2. Validadores com testes. CPF e CNPJ com dígito verificador. Inclua o CNPJ alfanumérico, formato previsto para valer a partir de julho de 2026; confira a regra oficial da Receita Federal antes de implementar.
-3. Leitura de CSV e XLSX com detecção de separador e codificação.
-4. Mapeamento de colunas com sugestão automática e ajuste manual.
-5. Motor de validação por linha, que acumula todos os erros da linha.
-6. Detecção de duplicados por documento.
-7. Interface em 4 passos com pré-visualização e contadores (válidas, com aviso, rejeitadas).
-8. Exportação: CSV limpo, `INSERT` em lotes e CSV de rejeitados com o motivo.
-9. Web Worker para arquivos grandes, com meta de 10 mil linhas em até 5 segundos.
-10. Publicação e README com um caso de antes e depois.
+**Antes (planilha original):**
+```csv
+nome;documento;uf
+João Silva;123.456.789-00;SP
+Empresa X;00/000.000/0000-00;RJ
+Maria;123.456.789-00;SP
+```
 
-## Como deve funcionar
+**Depois (CSV limpo exportado):**
+```csv
+nome,documento,uf
+João Silva,12345678900,SP
+Empresa X,000000000000,RJ
+```
 
-- O usuário envia a planilha, confere o mapeamento sugerido e vê quantas linhas passam.
-- Cada linha rejeitada mostra todos os motivos, por exemplo "CNPJ com dígito inválido; UF inexistente".
-- O arquivo limpo sai sem máscara, com datas no padrão ISO e texto normalizado.
-- Nada é enviado a servidor.
+**O que acontece:**
+- CPF com máscara é normalizado para número limpo
+- CNPJ alfanumérico é validado (formato previsto para valer a partir de julho de 2026)
+- Documento duplicado é detectado e rejeitado
+- UF é validada contra as 27 siglas brasileiras
+- Resultado: 2 válidas, 1 rejeitada (documento duplicado)
 
-## Prazo
+## Como executar
 
-2 semanas.
-
-## Execução local
-
-Requisitos: Node.js 22.12 ou superior e npm. Instale e execute:
+Requisitos: Node.js 22.12 ou superior e npm.
 
 ```sh
 npm ci
 npm run dev
 ```
 
-Execute `npm test` para os testes, `npm run lint` para análise estática e `npm run build` para gerar `dist/`. O site atual é uma tela inicial; a interface de migração ainda será implementada. O núcleo pode ser utilizado pelos módulos TypeScript descritos abaixo.
+Execute `npm test` para os testes, `npm run lint` para análise estática e `npm run build` para gerar `dist/`.
 
-## Núcleo de migração
+## Publicação
 
-`lerArquivo(buffer, nome)` lê CSV ou a primeira aba XLSX e retorna colunas e linhas. CSV detecta separador com PapaParse e aceita UTF-8, UTF-16 com BOM ou Windows-1252 como alternativa. Cabeçalhos vazios ou repetidos e linhas com células excedentes são rejeitados. XLSX usa a distribuição oficial do SheetJS. As datas na planilha devem estar em formato textual `DD/MM/AAAA` ou `AAAA-MM-DD`.
+GitHub Actions publica automaticamente no GitHub Pages a cada push na `main`.
 
-`sugerirMapeamento(colunas, layout)` sugere nomes e aliases; o consumidor pode editar o objeto de campo de destino para coluna de origem antes de chamar `processar`. Os layouts de clientes e produtos estão em `src/layouts`. O motor normaliza valores, acumula erros por linha e rejeita documentos válidos repetidos, incluindo repetições em linhas com outros erros. A primeira ocorrência reserva o documento. Produtos não possuem campo de documento. Os exemplos em `exemplos/` usam dados fictícios.
+## Decisões técnicas
 
-`csvLimpo`, `csvRejeitados` e `sqlInsert` geram os arquivos de saída. O CSV protege células contra fórmulas de planilha; o SQL usa literais escapados e lotes de 500 por padrão. Revise o SQL e adapte tipos e nomes ao banco de destino antes de executá-lo. A linha indicada no relatório corresponde à posição após o cabeçalho, sem contar linhas vazias ignoradas no CSV.
+- **Sem backend**: todo processamento é local no navegador
+- **Web Worker opcional**: ainda implementado mas não ativado na UI (para arquivos maiores)
+- **Mapeamento automático**: sugere colunas por nome e aliases, mas permite ajuste manual
+- **Validação acumulativa**: cada linha rejeitada mostra TODOS os erros, não apenas o primeiro
 
-O worker recebe `{ buffer, nome, tipo, mapa }`, onde `tipo` é `clientes` ou `produtos`, e responde com `{ sucesso, validas, rejeitadas }` ou `{ sucesso: false, erro }`. O processamento é local; a interface ainda não usa o worker. Para reproduzir a medição do motor: `npm test -- tests/desempenho.test.ts --disableConsoleIntercept`. Em Node 24.22.3 neste ambiente, 10.000 produtos levaram 249,5 ms no motor, sem leitura, transferência ou worker. A meta de cinco segundos para o fluxo completo no navegador ainda precisa ser medida.
+## Limitações
 
-## Regras disponíveis
+- Web Worker ainda não está integrado à UI (arquivo worker.ts existe mas não é usado)
+- Contadores mostram apenas "válidas" e "rejeitadas" (não há "com aviso")
+- Upload máximo sugerido: 10MB (navegador-defined)
 
-Os módulos em `src/core/validadores` retornam booleanos. CPF e CNPJ verificam formato e dígitos verificadores; CNPJ aceita letras minúsculas e maiúsculas e preserva compatibilidade com números. CEP e NCM verificam somente o formato, sem consultar existência em cadastro oficial. UF aceita as 27 siglas brasileiras. E-mail verifica sintaxe básica, sem confirmar entrega ou existência da caixa postal. Entradas inválidas não são reparadas silenciosamente.
+## Próximos passos
 
-`removerMascara` remove pontos, barras, hífens e espaços; `normalizarTexto` remove espaços excedentes e converte para maiúsculas; `normalizarData` aceita `DD/MM/AAAA` ou `AAAA-MM-DD`, valida o calendário e retorna ISO ou `null`. Os dados de teste são fictícios, exceto o exemplo público de cálculo da Receita.
+- Ativar Web Worker para arquivos grandes
+- Adicionar suporte a mais formatos de planilha
+- Implementar pré-visualização dos dados
 
-O CNPJ alfanumérico usa módulo 11 e valor ASCII menos 48 para cada caractere, conforme o [manual da Receita Federal](https://www.gov.br/receitafederal/pt-br/centrais-de-conteudo/publicacoes/documentos-tecnicos/cnpj/manual-dv-cnpj.pdf) e a [IN RFB 2.229/2024](https://www.gov.br/receitafederal/pt-br/assuntos/noticias/2024/outubro/cnpj-tera-letras-e-numeros-a-partir-de-julho-de-2026). Validar dígitos não prova que um documento foi emitido.
+## Tests
 
-A publicação no GitHub Pages ocorre por GitHub Actions após push na `main`. A demonstração está publicada e acessível no link abaixo do título.
+```sh
+npm test                   # Testes unitários
+npm test -- desempenho     # Teste de desempenho (10.000 linhas)
+```
 
 ## Autor
 

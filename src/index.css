@@ -1,3 +1,68 @@
 :root { font-family: system-ui, sans-serif; color: #1b2938; background: #f4f7fa; }
 body { margin: 0; }
 main { max-width: 48rem; margin: 4rem auto; padding: 0 1.5rem; }
+
+/* Progresso */
+.progresso { margin-bottom: 2rem; }
+.progresso-lista { display: flex; list-style: none; padding: 0; margin: 0; gap: 1rem; justify-content: center; }
+.progresso-item { display: flex; flex-direction: column; align-items: center; font-size: 0.85rem; }
+.progresso-numero { width: 2rem; height: 2rem; display: flex; align-items: center; justify-content: center; border-radius: 9999px; background: #e2e8f0; color: #475569; font-weight: 600; }
+.progresso-item--ativo .progresso-numero { background: #2563eb; color: white; }
+.progresso-item--completo .progresso-numero { background: #22c55e; color: white; }
+.progresso-nome { margin-top: 0.25rem; }
+
+/* Upload */
+.upload-dropzone { border: 2px dashed #cbd5e1; border-radius: 0.75rem; padding: 2rem; text-align: center; cursor: pointer; transition: border-color 0.2s, background 0.2s; }
+.upload-dropzone:hover { border-color: #94a3b8; background: #f8fafc; }
+.upload-input { display: none; }
+.upload-content svg { stroke: #64748b; margin-bottom: 1rem; }
+.upload-content p { margin: 0.5rem 0 0.25rem; }
+.upload-content small { color: #64748b; }
+.upload-mensagem { color: #2563eb; font-weight: 500; }
+.upload-erro { color: #dc2626; font-weight: 500; }
+
+/* Mapear */
+.mapear-resumo { background: #f8fafc; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem; }
+.mapear-tabela { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
+.mapear-tabela th, .mapear-tabela td { padding: 0.75rem; text-align: left; border-bottom: 1px solid #e2e8f0; }
+.mapear-tabela th { background: #f1f5f9; font-weight: 600; }
+.mapear-tabela select { padding: 0.5rem; border-radius: 0.25rem; border: 1px solid #cbd5e1; }
+.tag { font-size: 0.75rem; padding: 0.25rem 0.5rem; border-radius: 9999px; background: #e2e8f0; }
+.tag-tag { background: #e2e8f0; }
+.mapear-acoes { display: flex; gap: 0.75rem; }
+.mapear-acoes button { flex: 1; padding: 0.75rem 1rem; border: none; border-radius: 0.5rem; cursor: pointer; font-weight: 500; }
+.mapear-acoes button:disabled { background: #cbd5e1; cursor: not-allowed; }
+
+/* Validar */
+.resumo { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+.resumo-item { background: white; padding: 1rem 1.5rem; border-radius: 0.5rem; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+.resumo-numero { display: block; font-size: 1.75rem; font-weight: 700; }
+.resumo-rotulo { font-size: 0.85rem; color: #64748b; }
+.resumo-item--validas .resumo-numero { color: #22c55e; }
+.resumo-item--rejeitadas .resumo-numero { color: #dc2626; }
+.validar-acoes { display: flex; gap: 0.75rem; }
+.validar-acoes button { flex: 1; padding: 0.75rem 1rem; border: none; border-radius: 0.5rem; cursor: pointer; font-weight: 500; }
+.validar-acoes button:disabled { background: #cbd5e1; cursor: not-allowed; }
+.tabela-rejeitadas { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+.tabela-rejeitadas th, .tabela-rejeitadas td { padding: 0.5rem; border-bottom: 1px solid #e2e8f0; }
+.rejeitadas-lista summary { font-weight: 600; margin-bottom: 0.5rem; cursor: pointer; }
+
+/* Exportar */
+.exportar-acoes { display: flex; gap: 0.75rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+.exportar-acoes button { flex: 1; min-width: 120px; padding: 0.75rem 1rem; border: none; border-radius: 0.5rem; cursor: pointer; font-weight: 500; }
+.preview { margin-top: 2rem; padding: 1rem; background: #f8fafc; border-radius: 0.5rem; }
+.preview-exemplo { display: flex; gap: 1rem; flex-wrap: wrap; }
+.preview-exemplo pre { background: #f1f5f9; padding: 0.75rem; border-radius: 0.25rem; font-size: 0.8rem; overflow-x: auto; }
+
+/* Tipos */
+.tipo-selector { display: flex; gap: 1rem; flex-wrap: wrap; }
+.tipo-botao { flex: 1; min-width: 200px; background: white; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1.5rem; cursor: pointer; text-align: left; transition: box-shadow 0.2s; }
+.tipo-botao:hover { box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+.tipo-botao h3 { margin: 0 0 0.5rem 0; font-size: 1.125rem; }
+.tipo-botao p { margin: 0; color: #64748b; font-size: 0.85rem; }
+
+@media (max-width: 600px) {
+  .progresso-lista { flex-wrap: wrap; }
+  .preview-exemplo { flex-direction: column; }
+  .tipo-selector { flex-direction: column; }
+}
