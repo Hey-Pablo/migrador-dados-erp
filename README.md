@@ -1,6 +1,6 @@
 # Migrador de Dados para ERP
 
-> **Demonstração:** https://hey-pablo.github.io/migrador-dados-erp/
+> **Demonstração:** em breve após merge
 
 > **Status: pronto para revisão.** Interface em 4 passos implementada com upload sugerido, mapeamento manual, validação e exportação.
 
