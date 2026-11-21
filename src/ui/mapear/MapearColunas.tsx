@@ -1,9 +1,10 @@
 import { useEstado } from '../estado/EstadoContext'
+import { processar } from '../../core/motor'
 import type { Campo } from '../../layouts/tipos'
 
 export function MapearColunas() {
-  const { colunas, mapa, setMapa, setEtapa, linhasValidas, setLinhasValidas, linhasRejeitadas, setLinhasRejeitadas, layoutClientes } = useEstado()
-  const campos: Campo[] = layoutClientes.campos
+  const { colunas, mapa, setMapa, setEtapa, linhasValidas, setLinhasValidas, linhasRejeitadas, setLinhasRejeitadas, layoutClientes, layoutProdutos, tipo, linhas, setLinhasAviso } = useEstado()
+  const campos: Campo[] = (tipo === 'clientes' ? layoutClientes : layoutProdutos).campos
 
   const handleChange = (campoNome: string, coluna: string) => {
     setMapa({ ...mapa, [campoNome]: coluna })
@@ -16,8 +17,10 @@ export function MapearColunas() {
       alert(`Campos obrigatórios sem mapeamento: ${faltando.join(', ')}`)
       return
     }
-    setLinhasValidas([])
-    setLinhasRejeitadas([])
+    const resultado = processar(linhas, mapa, tipo === 'clientes' ? layoutClientes : layoutProdutos)
+    setLinhasValidas(resultado.validas)
+    setLinhasAviso(resultado.comAviso)
+    setLinhasRejeitadas(resultado.rejeitadas)
     setEtapa('validar')
   }
 
@@ -61,7 +64,7 @@ export function MapearColunas() {
 
       <div className="mapear-acoes">
         <button onClick={() => setEtapa('upload')} type="button">Voltar</button>
-        <button onClick={salvarMapa} disabled={Object.keys(mapa).filter(k => mapa[k]).length < campos.filter((c: Campo) => c.obrigatorio).length}>
+        <button onClick={salvarMapa} disabled={campos.some(c => c.obrigatorio && !mapa[c.nome])}>
           {linhasValidas.length || linhasRejeitadas.length ? 'Reprocessar' : 'Prosseguir para Validação'}
         </button>
       </div>

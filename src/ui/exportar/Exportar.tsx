@@ -2,8 +2,9 @@ import { useEstado } from '../estado/EstadoContext'
 import { csvLimpo, sqlInsert, csvRejeitados } from '../../core/exportadores'
 
 export function ExportarDados() {
-  const { linhasValidas, linhasRejeitadas, layoutClientes } = useEstado()
-  const layout = layoutClientes
+  const { linhasValidas, linhasAviso, linhasRejeitadas, layoutClientes, layoutProdutos, tipo, setEtapa, resetar } = useEstado()
+  const layout = tipo === 'clientes' ? layoutClientes : layoutProdutos
+  const exportaveis = [...linhasValidas, ...linhasAviso]
   const tabela = layout.tabela
 
   const baixar = (conteudo: string, nome: string, type: string) => {
@@ -17,11 +18,11 @@ export function ExportarDados() {
   }
 
   const exportarCsv = () => {
-    baixar(csvLimpo(linhasValidas, layout), 'dados-limpo.csv', 'text/csv')
+    baixar(csvLimpo(exportaveis, layout), 'dados-limpo.csv', 'text/csv')
   }
 
   const exportarSql = () => {
-    baixar(sqlInsert(linhasValidas, layout), `insert-${tabela}.sql`, 'text/plain')
+    baixar(sqlInsert(exportaveis, layout), `insert-${tabela}.sql`, 'text/plain')
   }
 
   const exportarRejeitadas = () => {
@@ -31,11 +32,11 @@ export function ExportarDados() {
   return (
     <section className="etapa">
       <h2>Exportar Dados</h2>
-      <p>Selecione o formato de saída para os {linhasValidas.length} registros válidos.</p>
+      <p>Selecione o formato de saída para os {exportaveis.length} registros válidos.</p>
 
       <div className="resumo">
         <div className="resumo-item resumo-item--validas">
-          <span className="resumo-numero">{linhasValidas.length}</span>
+          <span className="resumo-numero">{exportaveis.length}</span>
           <span className="resumo-rotulo">registros válidos</span>
         </div>
         <div className="resumo-item resumo-item--rejeitadas">
@@ -45,11 +46,13 @@ export function ExportarDados() {
       </div>
 
       <div className="exportar-acoes">
-        <button onClick={exportarCsv} disabled={!linhasValidas.length}>CSV Limpo</button>
-        <button onClick={exportarSql} disabled={!linhasValidas.length}>SQL (INSERT)</button>
+        <button onClick={exportarCsv} disabled={!exportaveis.length}>CSV Limpo</button>
+        <button onClick={exportarSql} disabled={!exportaveis.length}>SQL (INSERT)</button>
         <button onClick={exportarRejeitadas} disabled={!linhasRejeitadas.length}>CSV Rejeitadas</button>
       </div>
 
+      <button onClick={() => setEtapa('validar')}>Voltar</button>
+      <button onClick={resetar}>Nova migração</button>
       <details className="preview">
         <summary>Antes e Depois</summary>
         <div className="preview-exemplo">

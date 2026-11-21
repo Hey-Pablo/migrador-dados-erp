@@ -1,28 +1,11 @@
 import { useEstado } from '../estado/EstadoContext'
-import { processar } from '../../core/motor'
 
 export function ValidarDados() {
   const estado = useEstado()
-  const { linhas, mapa, setEtapa, setLinhasValidas, setLinhasRejeitadas, setCarregando, setErro, layoutClientes } = estado
-  const layout = layoutClientes
+  const { linhas, setEtapa } = estado
   const validasCountVal = estado.linhasValidas.length
   const rejeitadasCountVal = estado.linhasRejeitadas.length
   const total = linhas.length
-
-  const validar = () => {
-    setCarregando(true)
-    setErro(undefined)
-    try {
-      const resultado = processar(linhas, mapa, layout)
-      setLinhasValidas(resultado.validas)
-      setLinhasRejeitadas(resultado.rejeitadas)
-      setEtapa('exportar')
-    } catch (e) {
-      setErro(e instanceof Error ? e.message : 'Erro na validação')
-    } finally {
-      setCarregando(false)
-    }
-  }
 
   return (
     <section className="etapa">
@@ -38,6 +21,7 @@ export function ValidarDados() {
           <span className="resumo-numero">{validasCountVal}</span>
           <span className="resumo-rotulo">válidas</span>
         </div>
+        <div className="resumo-item"><span className="resumo-numero">{estado.linhasAviso.length}</span><span className="resumo-rotulo">com aviso</span></div>
         <div className="resumo-item resumo-item--rejeitadas">
           <span className="resumo-numero">{rejeitadasCountVal}</span>
           <span className="resumo-rotulo">rejeitadas</span>
@@ -65,7 +49,7 @@ export function ValidarDados() {
 
       <div className="validar-acoes">
         <button onClick={() => setEtapa('mapear')} type="button">Voltar</button>
-        <button onClick={validar} disabled>Validar</button>
+        <button onClick={() => setEtapa('exportar')}>Exportar</button>
       </div>
     </section>
   )

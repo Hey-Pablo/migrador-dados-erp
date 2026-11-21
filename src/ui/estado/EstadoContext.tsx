@@ -10,6 +10,7 @@ export type EstadoMigracao = {
   colunas: string[]
   linhas: Linha[]
   linhasValidas: Linha[]
+  linhasAviso: Linha[]
   linhasRejeitadas: Array<{ linha: number; dados: Linha; erros: string[] }>
   mapa: Record<string, string>
   erro?: string
@@ -29,6 +30,7 @@ export type EstadoContexto = EstadoMigracao & {
   setLinhas: (l: Linha[]) => void
   setMapa: (m: Record<string, string>) => void
   setLinhasValidas: (l: Linha[]) => void
+  setLinhasAviso: (l: Linha[]) => void
   setLinhasRejeitadas: (l: EstadoMigracao['linhasRejeitadas']) => void
   setErro: (e?: string) => void
   setCarregando: (c: boolean) => void
@@ -46,6 +48,7 @@ export function ProvedorEstado({ children, layoutClientes, layoutProdutos }: Est
     colunas: [],
     linhas: [],
     linhasValidas: [],
+    linhasAviso: [],
     linhasRejeitadas: [],
     mapa: {},
     carregando: false
@@ -57,6 +60,7 @@ export function ProvedorEstado({ children, layoutClientes, layoutProdutos }: Est
   const setLinhas = (l: Linha[]) => setEstado(s => ({ ...s, linhas: l }))
   const setMapa = (m: Record<string, string>) => setEstado(s => ({ ...s, mapa: m }))
   const setLinhasValidas = (l: Linha[]) => setEstado(s => ({ ...s, linhasValidas: l }))
+  const setLinhasAviso = (l: Linha[]) => setEstado(s => ({ ...s, linhasAviso: l }))
   const setLinhasRejeitadas = (l: EstadoMigracao['linhasRejeitadas']) => setEstado(s => ({ ...s, linhasRejeitadas: l }))
   const setErro = (e?: string) => setEstado(s => ({ ...s, erro: e }))
   const setCarregando = (c: boolean) => setEstado(s => ({ ...s, carregando: c }))
@@ -67,6 +71,7 @@ export function ProvedorEstado({ children, layoutClientes, layoutProdutos }: Est
     colunas: [],
     linhas: [],
     linhasValidas: [],
+    linhasAviso: [],
     linhasRejeitadas: [],
     mapa: {},
     carregando: false
@@ -81,6 +86,7 @@ export function ProvedorEstado({ children, layoutClientes, layoutProdutos }: Est
       setLinhas,
       setMapa,
       setLinhasValidas,
+      setLinhasAviso,
       setLinhasRejeitadas,
       setErro,
       setCarregando,

@@ -4,6 +4,7 @@ import { Progresso } from './components/Progresso'
 import { MapearColunas } from './ui/mapear/MapearColunas'
 import { ValidarDados } from './ui/validar/ValidarDados'
 import { ExportarDados } from './ui/exportar/Exportar'
+import { UploadArquivo } from './ui/upload/UploadArquivo'
 import { TipoUpload } from './ui/upload/TipoUpload'
 import { clientes } from './layouts/clientes'
 import { produtos } from './layouts/produtos'
@@ -17,14 +18,15 @@ function App() {
 }
 
 function Conteudo() {
-  const { etapa } = useEstado()
+  const { etapa, tipo, erro } = useEstado()
   return (
     <main>
       <h1>Migrador de Dados para ERP</h1>
       <p>Ferramenta web para migrar planilhas para banco de dados.</p>
       <Progresso />
 
-      {etapa === 'upload' && <TipoUpload />}
+      {erro && <p role="alert">{erro}</p>}
+      {etapa === 'upload' && (tipo ? <UploadArquivo /> : <TipoUpload />)}
       {etapa === 'mapear' && <MapearColunas />}
       {etapa === 'validar' && <ValidarDados />}
       {etapa === 'exportar' && <ExportarDados />}

@@ -4,13 +4,13 @@ import { normalizarData, normalizarTexto, removerMascara } from './normalizadore
 import { validarCpf, validarCnpj, validarUf, validarCep, validarEmail, validarNcm } from './validadores'
 export type Rejeitada = { linha: number; dados: Linha; erros: string[] }
 export function processar(linhas: Linha[], mapa: Record<string, string>, layout: Layout) {
-  const validas: Linha[] = [], rejeitadas: Rejeitada[] = []
+  const validas: Linha[] = [], comAviso: Linha[] = [], rejeitadas: Rejeitada[] = []
   const documentos = new Set<string>()
   linhas.forEach((original, indice) => {
-    const dados: Linha = {}, erros: string[] = []
+    const dados: Linha = {}, erros: string[] = [], avisos: string[] = []
     for (const campo of layout.campos) {
       const valor = String(original[mapa[campo.nome]] ?? '').trim()
-      if (!valor) { dados[campo.nome] = ''; if (campo.obrigatorio) erros.push(`${campo.nome}: obrigatório`); continue }
+      if (!valor) { dados[campo.nome] = ''; if (campo.obrigatorio) erros.push(`${campo.nome}: obrigatório`); else if (mapa[campo.nome]) avisos.push(`${campo.nome}: vazio`); continue }
       let normalizado = valor
       let valido = true
       switch (campo.tipo) {
@@ -28,7 +28,7 @@ export function processar(linhas: Linha[], mapa: Record<string, string>, layout:
       if (normalizado.length > campo.tamanho) erros.push(`${campo.nome}: excede ${campo.tamanho} caracteres`)
       if (campo.tipo === 'documento' && valido) { if (documentos.has(normalizado)) erros.push(`${campo.nome}: duplicado`); documentos.add(normalizado) }
     }
-    if (erros.length) rejeitadas.push({ linha: indice + 2, dados: original, erros }); else validas.push(dados)
+    if (erros.length) rejeitadas.push({ linha: indice + 2, dados: original, erros }); else if (avisos.length) comAviso.push(dados); else validas.push(dados)
   })
-  return { validas, rejeitadas }
+  return { validas, comAviso, rejeitadas }
 }
