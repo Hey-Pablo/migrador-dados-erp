@@ -2,7 +2,7 @@
 
 > **Demonstração:** https://hey-pablo.github.io/migrador-dados-erp/
 
-> **Status: pronto para revisão.** Interface em 4 passos funcional com fluxo completo.
+> **Status: concluído.** Interface em 4 passos funcional com fluxo completo. Testes: 15/15. Merge realizado.
 
 ## O que é
 
