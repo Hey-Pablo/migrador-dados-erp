@@ -1,6 +1,7 @@
 import { useEstado } from './ui/estado/EstadoContext'
 import { ProvedorEstado } from './ui/estado/EstadoContext'
 import { Progresso } from './components/Progresso'
+import { UploadArquivo } from './ui/upload/UploadArquivo'
 import { MapearColunas } from './ui/mapear/MapearColunas'
 import { ValidarDados } from './ui/validar/ValidarDados'
 import { ExportarDados } from './ui/exportar/Exportar'
@@ -24,12 +25,20 @@ function Conteudo() {
       <p>Ferramenta web para migrar planilhas para banco de dados.</p>
       <Progresso />
 
-      {etapa === 'upload' && <TipoUpload />}
+      {etapa === 'upload' && <TelaUpload />}
       {etapa === 'mapear' && <MapearColunas />}
       {etapa === 'validar' && <ValidarDados />}
       {etapa === 'exportar' && <ExportarDados />}
     </main>
   )
+}
+
+function TelaUpload() {
+  const { tipo } = useEstado()
+  // Se ainda não definiu o tipo, mostra a tela de seleção
+  if (!tipo) return <TipoUpload />
+  // Se já definiu o tipo, mostra o upload
+  return <UploadArquivo />
 }
 
 export default App
