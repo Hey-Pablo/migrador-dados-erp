@@ -57,6 +57,27 @@ migrador-dados-erp/
 
 2 semanas.
 
+## Execução local
+
+Requisitos: Node.js 22.12 ou superior e npm. Instale e execute:
+
+```sh
+npm ci
+npm run dev
+```
+
+Execute `npm test` para os testes, `npm run lint` para análise estática e `npm run build` para gerar `dist/`. O site atual é uma tela inicial; a importação e a interface de migração ainda serão implementadas.
+
+## Regras disponíveis
+
+Os módulos em `src/core/validadores` retornam booleanos. CPF e CNPJ verificam formato e dígitos verificadores; CNPJ aceita letras minúsculas e maiúsculas e preserva compatibilidade com números. CEP e NCM verificam somente o formato, sem consultar existência em cadastro oficial. UF aceita as 27 siglas brasileiras. E-mail verifica sintaxe básica, sem confirmar entrega ou existência da caixa postal. Entradas inválidas não são reparadas silenciosamente.
+
+`removerMascara` remove pontos, barras, hífens e espaços; `normalizarTexto` remove espaços excedentes e converte para maiúsculas; `normalizarData` aceita `DD/MM/AAAA` ou `AAAA-MM-DD`, valida o calendário e retorna ISO ou `null`. Os dados de teste são fictícios, exceto o exemplo público de cálculo da Receita.
+
+O CNPJ alfanumérico usa módulo 11 e valor ASCII menos 48 para cada caractere, conforme o [manual da Receita Federal](https://www.gov.br/receitafederal/pt-br/centrais-de-conteudo/publicacoes/documentos-tecnicos/cnpj/manual-dv-cnpj.pdf) e a [IN RFB 2.229/2024](https://www.gov.br/receitafederal/pt-br/assuntos/noticias/2024/outubro/cnpj-tera-letras-e-numeros-a-partir-de-julho-de-2026). Validar dígitos não prova que um documento foi emitido.
+
+A publicação no GitHub Pages ocorre por GitHub Actions após push na `main`. A demonstração ainda não está disponível; a URL retornou 404 na verificação desta etapa.
+
 ## Autor
 
 Pablo Dilio · [Portfólio](https://hey-pablo.github.io/pablo-dilio-portfolio/) · [LinkedIn](https://www.linkedin.com/in/pablo-dilio-4063991b2)

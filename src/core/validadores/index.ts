@@ -1,0 +1,6 @@
+export { validarCpf } from './cpf'
+export { validarCnpj } from './cnpj'
+export { validarCep } from './cep'
+export { validarUf } from './uf'
+export { validarNcm } from './ncm'
+export { validarEmail } from './email'
