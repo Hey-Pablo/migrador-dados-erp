@@ -2,7 +2,7 @@
 
 > **Demonstração:** https://hey-pablo.github.io/migrador-dados-erp/
 
-> **Status:** correção do fluxo em revisão.
+> **Status:** fluxo em 4 passos funcionando no site (upload, mapeamento, validação e exportação); falta validar com planilhas reais no PC do Pablo.
 
 ## O que é
 
