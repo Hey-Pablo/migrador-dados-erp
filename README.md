@@ -2,7 +2,7 @@
 
 > **Demonstração:** https://hey-pablo.github.io/migrador-dados-erp/
 
-> **Status: pronto para revisão.** Interface em 4 passos implementada com upload sugerido, mapeamento manual, validação e exportação.
+> **Status:** correção do fluxo em revisão.
 
 ## O que é
 
@@ -97,7 +97,7 @@ GitHub Actions publica automaticamente no GitHub Pages a cada push na `main`.
 ## Limitações
 
 - Web Worker ainda não está integrado à UI (arquivo worker.ts existe mas não é usado)
-- Contadores mostram apenas "válidas" e "rejeitadas" (não há "com aviso")
+- Linhas com campos opcionais mapeados vazios recebem aviso e continuam disponíveis para exportação
 - Upload máximo sugerido: 10MB (navegador-defined)
 
 ## Próximos passos
